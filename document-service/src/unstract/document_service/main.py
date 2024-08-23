@@ -6,9 +6,11 @@ import time
 from typing import Any
 
 import redis
-from flask import Flask, request, send_file
+from flask import Flask, request
 from odf import teletype, text
 from odf.opendocument import load
+import flask
+from pathlib import Path
 
 logging.basicConfig(
     level=logging.INFO,
@@ -205,7 +207,7 @@ def find_and_replace():
     except Exception as e:
         app.logger.error(f"Error while converting file to {output_format} format: {e}")
         return f"Error while converting file to {output_format} format!", 500
-    return send_file(file_name_output, as_attachment=True)
+    return flask.send_from_directory((p := Path(file_name_output)).parent, p.name, as_attachment=True)
 
 
 if __name__ == "__main__":
