@@ -9,6 +9,7 @@ import redis
 from flask import Flask, request, send_file
 from odf import teletype, text
 from odf.opendocument import load
+from security import safe_command
 
 logging.basicConfig(
     level=logging.INFO,
@@ -144,7 +145,7 @@ def find_and_replace():
     try:
         command = f"{LIBREOFFICE_PYTHON} -m unoserver.converter --convert-to odt \
             --filter writer8 {file_namex} {file_name_odt}"
-        result = subprocess.run(command, shell=True, capture_output=True, text=True)
+        result = safe_command.run(subprocess.run, command, shell=True, capture_output=True, text=True)
         app.logger.info(result)
         if result.returncode != 0:
             app.logger.error(
@@ -189,7 +190,7 @@ def find_and_replace():
             f"{LIBREOFFICE_PYTHON} -m unoserver.converter --convert-to pdf "
             f"--filter writer_pdf_Export {file_name_odt} {file_name_output}"
         )
-        result = subprocess.run(command, shell=True, capture_output=True, text=True)
+        result = safe_command.run(subprocess.run, command, shell=True, capture_output=True, text=True)
         if result.returncode != 0:
             app.logger.error(
                 f"Failed to convert file to {output_format} format: "
