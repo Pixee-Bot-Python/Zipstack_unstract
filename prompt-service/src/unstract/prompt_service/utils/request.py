@@ -5,6 +5,7 @@ from typing import Any, Optional
 import requests as pyrequests
 from requests.exceptions import RequestException
 from unstract.prompt_service.exceptions import APIError
+from security import safe_requests
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +28,7 @@ def make_http_request(
     """Generic helper function to help make a HTTP request."""
     try:
         if verb == HTTPMethod.GET:
-            response = pyrequests.get(url, params=params, headers=headers, timeout=60)
+            response = safe_requests.get(url, params=params, headers=headers, timeout=60)
         elif verb == HTTPMethod.POST:
             response = pyrequests.post(url, json=data, params=params, headers=headers, timeout=60)
         elif verb == HTTPMethod.DELETE:

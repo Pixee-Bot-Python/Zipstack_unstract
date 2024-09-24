@@ -5,6 +5,7 @@ from typing import Any, Optional, Union
 
 import requests
 from unstract.tool_sandbox.constants import UnstractWorker
+from security import safe_requests
 
 logger = logging.getLogger(__name__)
 
@@ -52,7 +53,7 @@ class ToolSandboxHelper:
         """
         url = f"{self.base_url}{endpoint}"
         params = {"image_name": image_name, "image_tag": image_tag}
-        response = requests.get(url, params=params, timeout=60)
+        response = safe_requests.get(url, params=params, timeout=60)
         result: Optional[dict[str, Any]] = None
         if response.status_code == 200:
             result = response.json()

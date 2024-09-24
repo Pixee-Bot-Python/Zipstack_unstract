@@ -2,12 +2,11 @@ import json
 import os
 from datetime import datetime, timedelta
 from typing import Any, Optional
-
-import requests
 from flask import current_app as app
 from singleton_decorator import singleton
 from unstract.platform_service.env import Env
 from unstract.platform_service.utils import format_float_positional
+from security import safe_requests
 
 
 @singleton
@@ -79,7 +78,7 @@ class CostCalculationHelper:
         """
         try:
             # Fetch updated JSON data from API
-            response = requests.get(self.url, timeout=10)
+            response = safe_requests.get(self.url, timeout=10)
             response.raise_for_status()
             json_data = response.json()
             # Save JSON data to file
