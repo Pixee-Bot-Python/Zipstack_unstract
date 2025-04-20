@@ -73,7 +73,7 @@ class ExceptionLoggingMiddleware:
                 request=request, exception=exception
             )
             detail = {"detail": "Error processing the request."}
-            return HttpResponse(json.dumps(detail), status=500)
+            return HttpResponse(json.dumps(detail), status=500, content_type="application/json")
         return None
 
     @staticmethod
