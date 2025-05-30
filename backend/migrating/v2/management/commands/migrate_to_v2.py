@@ -336,14 +336,14 @@ class DataMigrator:
             None
         """
         try:
-            column_type_query = f"""
+            column_type_query = """
                 SELECT data_type
                 FROM information_schema.columns
-                WHERE table_schema = '{self.v2_schema}' AND table_name = '{dest_table}'
+                WHERE table_schema = ? AND table_name = ?
                 AND column_name = 'id';
             """
 
-            dest_cursor.execute(column_type_query)
+            dest_cursor.execute(column_type_query, (self.v2_schema, dest_table, ))
             result = dest_cursor.fetchone()
 
             if not result:
@@ -371,10 +371,8 @@ class DataMigrator:
                     "auto-increment."
                 )
                 return
-
-            seq_name = f'"{self.v2_schema}".{dest_table}_id_seq'
-            seq_query = f"SELECT setval('{seq_name}', {max_id});"
-            dest_cursor.execute(seq_query)
+            seq_query = f"SELECT setval(?, {max_id});"
+            dest_cursor.execute(seq_query, ('"{0}".{1}_id_seq'.format(self.v2_schema, dest_table), ))
             dest_conn.commit()
             logger.info(
                 f"Adjusted auto-increment for table {dest_table} "
